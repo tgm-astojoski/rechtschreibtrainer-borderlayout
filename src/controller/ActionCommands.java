@@ -7,5 +7,6 @@ public enum ActionCommands {
     menuBarDarkMode, menuBarAnsichtseinstellungen,
     menuBarGithub,
     menuBarAnleitung,
-    menuBarZurueck;
+    menuBarZurueck,
+    manageQuestionPoolBtn;
 }
