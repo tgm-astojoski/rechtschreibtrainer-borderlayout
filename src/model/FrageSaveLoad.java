@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class WTBLFrageSaveLoad {
+public class FrageSaveLoad {
     private String defaultPfad;
 
-    public WTBLFrageSaveLoad(String defaultPfad) {
+    public FrageSaveLoad(String defaultPfad) {
         setDefaultPfad(defaultPfad);
     }
 
