@@ -12,7 +12,7 @@ public class MainPanel extends JPanel implements ComponentListener {
 
     private ActionListener actionListener;
 
-    private  JPanel centerPanel;
+    private JPanel centerPanel;
     private JPanel westPanel;
     private JPanel eastPanel;
 
@@ -25,8 +25,8 @@ public class MainPanel extends JPanel implements ComponentListener {
         this.actionListener = actionListener;
 
         this.setLayout(new BorderLayout(7, 7));
-        this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        this.setBackground(Color.LIGHT_GRAY);
+        this.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 10));
+        this.setBackground(Color.DARK_GRAY);
         this.setMinimumSize(new Dimension(600,400));
         this.setPreferredSize(new Dimension(600,400));
         this.addComponentListener(this);
@@ -44,7 +44,7 @@ public class MainPanel extends JPanel implements ComponentListener {
         centerPanel = new JPanel();
         centerPanel.setLayout(new GridLayout(2, 2, 2, 2));
         centerPanel.setBackground(Color.LIGHT_GRAY);
-        centerPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        centerPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 5));
         centerPanel.setOpaque(true);
 
         quizBtn = new JButton("Quiz");
@@ -70,27 +70,7 @@ public class MainPanel extends JPanel implements ComponentListener {
     }
 
     public void createWest(){
-        westPanel = new JPanel();
-        westPanel.setLayout(new GridLayout(2, 2, 2, 2));
-        westPanel.setBackground(Color.LIGHT_GRAY);
-        westPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        westPanel.setOpaque(true);
-
-        JButton btn1 = new JButton("1");
-        JButton btn2 = new JButton("2");
-        JButton btn3 = new JButton("3");
-        JButton btn4 = new JButton("4");
-
-        btn1.setFont(new Font("Arial", Font.BOLD, 30));
-        btn2.setFont(new Font("Arial", Font.BOLD, 30));
-        btn3.setFont(new Font("Arial", Font.BOLD, 30));
-        btn4.setFont(new Font("Arial", Font.BOLD, 30));
-
-        westPanel.add(btn1);
-        westPanel.add(btn2);
-        westPanel.add(btn3);
-        westPanel.add(btn4);
-
+        westPanel = new ManageQuestionPoolPanel(this.actionListener);
         westPanel.setVisible(false);
     }
 

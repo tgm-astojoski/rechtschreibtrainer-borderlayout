@@ -65,6 +65,9 @@ public class EventHandler implements ActionListener {
             case menuBarZurueck:
                 System.out.println("Zurück");
                 break;
+
+            case manageQuestionPoolBtn:
+                System.out.println("Fragepool verwalten verwalten");
         }
     }
 }
