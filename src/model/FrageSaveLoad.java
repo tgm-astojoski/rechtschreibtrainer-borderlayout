@@ -32,7 +32,7 @@ public class FrageSaveLoad {
         saveFragenpool(pool, pfad + File.separator + filename);
     }
 
-    // ---------------- LOAD ----------------
+    // ---------------- LOAD ---------------
 
     public Fragenpool loadFragenpool(String filename) throws IOException {
 
