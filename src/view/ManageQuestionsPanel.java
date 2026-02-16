@@ -47,13 +47,36 @@ public class ManageQuestionsPanel extends JFrame {
         try {
             // Entferne .txt Extension falls vorhanden
             String cleanFilename = filename.replace(".txt", "");
-            FrageSaveLoad.FragenpoolWithStat result = loader.loadFragenpool(cleanFilename);
+
+            // Lade aus dem questionPools Ordner
+            FrageSaveLoad.FragenpoolWithStat result = loader.loadFragenpool("questionPools", cleanFilename);
             this.fragenpool = result.getPool();
             this.statistik = result.getStatistik();
         } catch (IOException e) {
             // Falls nicht gefunden, erstelle neuen Pool
-            this.fragenpool = new Fragenpool("Neuer Pool");
+            String poolName = filename.replace(".txt", "");
+            this.fragenpool = new Fragenpool(poolName);
             this.statistik = new Statistik();
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Datei nicht gefunden. Ein neuer Fragenpool wurde erstellt.",
+                    "Info",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (Exception e) {
+            // Bei jedem anderen Fehler (z.B. NoSuchElementException beim Parsen)
+            String poolName = filename.replace(".txt", "");
+            this.fragenpool = new Fragenpool(poolName);
+            this.statistik = new Statistik();
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Fehler beim Laden der Datei: " + e.getMessage() + "\nEin neuer Fragenpool wurde erstellt.",
+                    "Fehler",
+                    JOptionPane.ERROR_MESSAGE
+            );
+            e.printStackTrace();
         }
     }
 
@@ -315,7 +338,10 @@ public class ManageQuestionsPanel extends JFrame {
         FrageSaveLoad saver = new FrageSaveLoad();
         try {
             String cleanFilename = filename.replace(".txt", "");
-            saver.saveFragenpool(fragenpool, statistik, cleanFilename);
+
+            // Speichere in den questionPools Ordner
+            saver.saveFragenpool(fragenpool, statistik, "questionPools", cleanFilename);
+
             JOptionPane.showMessageDialog(
                     this,
                     "Fragenpool erfolgreich gespeichert!",
