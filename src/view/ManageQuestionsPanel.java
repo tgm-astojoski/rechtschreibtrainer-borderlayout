@@ -1,40 +1,104 @@
 package view;
 
+import controller.ActionCommands;
+import model.Frage;
+import model.FrageSaveLoad;
+import model.Fragenpool;
+import model.Statistik;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
-public class ManageQuestionsPanel extends JPanel {
+public class ManageQuestionsPanel extends JFrame {
+
+    private Fragenpool fragenpool;
+    private Statistik statistik;
+    private String filename;
 
     private DefaultListModel<String> questionsModel;
     private DefaultListModel<String> answersModel;
     private JList<String> questionsList;
     private JList<String> answersList;
 
-    public ManageQuestionsPanel() {
-        setLayout(new BorderLayout());
+    private JButton addButton;
+    private JButton deleteButton;
+    private JButton saveButton;
+    private JButton closeButton;
 
-        // Hauptpanel mit den beiden Listen
-        JPanel listsPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        listsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+    public ManageQuestionsPanel(String filename) {
+        this.filename = filename;
+        loadFragenpool();
+
+        setTitle("Fragenverwaltung - " + (fragenpool != null ? fragenpool.getTitel() : ""));
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(800, 600);
+        setLocationRelativeTo(null);
+
+        initComponents();
+        loadQuestions();
+    }
+
+    private void loadFragenpool() {
+        FrageSaveLoad loader = new FrageSaveLoad();
+        try {
+            // Entferne .txt Extension falls vorhanden
+            String cleanFilename = filename.replace(".txt", "");
+            FrageSaveLoad.FragenpoolWithStat result = loader.loadFragenpool(cleanFilename);
+            this.fragenpool = result.getPool();
+            this.statistik = result.getStatistik();
+        } catch (IOException e) {
+            // Falls nicht gefunden, erstelle neuen Pool
+            this.fragenpool = new Fragenpool("Neuer Pool");
+            this.statistik = new Statistik();
+        }
+    }
+
+    private void initComponents() {
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(5, 5, 5, 5);
 
         // Linkes Panel für Fragen
         JPanel questionsPanel = createListPanel("Fragen", true);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.5;
+        gbc.weighty = 1.0;
+        gbc.gridwidth = 1;
+        mainPanel.add(questionsPanel, gbc);
 
         // Rechtes Panel für Antworten
         JPanel answersPanel = createListPanel("Antworten", false);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 0.5;
+        gbc.weighty = 1.0;
+        mainPanel.add(answersPanel, gbc);
 
-        listsPanel.add(questionsPanel);
-        listsPanel.add(answersPanel);
+        // Button Panel
+        JPanel buttonPanel = createButtonPanel();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(buttonPanel, gbc);
 
-        add(listsPanel, BorderLayout.CENTER);
-
-        // Beispieldaten hinzufügen
-        addSampleData();
+        add(mainPanel);
     }
 
     private JPanel createListPanel(String title, boolean isQuestions) {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createTitledBorder(title));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
 
         // Nummerierung links
         DefaultListModel<String> numberModel = new DefaultListModel<>();
@@ -53,9 +117,23 @@ public class ManageQuestionsPanel extends JPanel {
         if (isQuestions) {
             questionsModel = mainModel;
             questionsList = mainList;
+
+            // Synchronisiere Auswahl zwischen Fragen und Antworten
+            questionsList.addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting() && answersList != null) {
+                    answersList.setSelectedIndex(questionsList.getSelectedIndex());
+                }
+            });
         } else {
             answersModel = mainModel;
             answersList = mainList;
+
+            // Synchronisiere Auswahl zwischen Antworten und Fragen
+            answersList.addListSelectionListener(e -> {
+                if (!e.getValueIsAdjusting() && questionsList != null) {
+                    questionsList.setSelectedIndex(answersList.getSelectedIndex());
+                }
+            });
         }
 
         // ScrollPane für die Hauptliste
@@ -70,12 +148,19 @@ public class ManageQuestionsPanel extends JPanel {
         // Synchronisierung der Scrollbars
         mainScrollPane.getVerticalScrollBar().setModel(numberScrollPane.getVerticalScrollBar().getModel());
 
-        // Layout
-        JPanel listContainer = new JPanel(new BorderLayout());
-        listContainer.add(numberScrollPane, BorderLayout.WEST);
-        listContainer.add(mainScrollPane, BorderLayout.CENTER);
+        // Nummerierung links hinzufügen
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.0;
+        gbc.weighty = 1.0;
+        panel.add(numberScrollPane, gbc);
 
-        panel.add(listContainer, BorderLayout.CENTER);
+        // Hauptliste rechts hinzufügen
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        panel.add(mainScrollPane, gbc);
 
         // Modell-Listener für automatische Nummerierung
         mainModel.addListDataListener(new javax.swing.event.ListDataListener() {
@@ -85,6 +170,46 @@ public class ManageQuestionsPanel extends JPanel {
         });
 
         return panel;
+    }
+
+    private JPanel createButtonPanel() {
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        addButton = new JButton("Hinzufügen");
+        deleteButton = new JButton("Löschen");
+        saveButton = new JButton("Speichern");
+        closeButton = new JButton("Schließen");
+
+        addButton.addActionListener(e -> addQuestion());
+        deleteButton.addActionListener(e -> deleteSelectedQuestion());
+        saveButton.addActionListener(e -> saveFragenpool());
+        closeButton.addActionListener(e -> dispose());
+
+        // Platzhalter links für Rechtsausrichtung
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        buttonPanel.add(Box.createHorizontalGlue(), gbc);
+
+        // Buttons
+        gbc.weightx = 0.0;
+
+        gbc.gridx = 1;
+        buttonPanel.add(addButton, gbc);
+
+        gbc.gridx = 2;
+        buttonPanel.add(deleteButton, gbc);
+
+        gbc.gridx = 3;
+        buttonPanel.add(saveButton, gbc);
+
+        gbc.gridx = 4;
+        buttonPanel.add(closeButton, gbc);
+
+        return buttonPanel;
     }
 
     private void updateNumbers(DefaultListModel<String> numberModel, DefaultListModel<String> mainModel) {
@@ -97,59 +222,113 @@ public class ManageQuestionsPanel extends JPanel {
         }
     }
 
-    private void addSampleData() {
-        questionsModel.addElement("Frage1");
-        questionsModel.addElement("Frage2");
-        questionsModel.addElement("Frage3");
+    private void loadQuestions() {
+        questionsModel.clear();
+        answersModel.clear();
 
-        answersModel.addElement("Antwort1");
-        answersModel.addElement("Antwort2");
-        answersModel.addElement("Antwort3");
-    }
-
-    // Öffentliche Methoden zum Hinzufügen/Entfernen von Elementen
-    public void addQuestion(String question) {
-        questionsModel.addElement(question);
-    }
-
-    public void addAnswer(String answer) {
-        answersModel.addElement(answer);
-    }
-
-    public void removeSelectedQuestion() {
-        int index = questionsList.getSelectedIndex();
-        if (index != -1) {
-            questionsModel.remove(index);
+        if (fragenpool != null && fragenpool.getFragen() != null) {
+            for (Frage frage : fragenpool.getFragen()) {
+                if (frage != null) {
+                    questionsModel.addElement(frage.getQuestion());
+                    answersModel.addElement(frage.getAnswer());
+                }
+            }
         }
     }
 
-    public void removeSelectedAnswer() {
-        int index = answersList.getSelectedIndex();
-        if (index != -1) {
-            answersModel.remove(index);
+    private void addQuestion() {
+        JTextField questionField = new JTextField();
+        JTextField answerField = new JTextField();
+
+        Object[] message = {
+                "Frage:", questionField,
+                "Antwort:", answerField
+        };
+
+        int option = JOptionPane.showConfirmDialog(
+                this,
+                message,
+                "Neue Frage hinzufügen",
+                JOptionPane.OK_CANCEL_OPTION
+        );
+
+        if (option == JOptionPane.OK_OPTION) {
+            String question = questionField.getText().trim();
+            String answer = answerField.getText().trim();
+
+            if (!question.isEmpty() && !answer.isEmpty()) {
+                Frage newFrage = new Frage(question, answer);
+                fragenpool.addFrage(newFrage);
+                questionsModel.addElement(question);
+                answersModel.addElement(answer);
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Frage und Antwort dürfen nicht leer sein!",
+                        "Fehler",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
     }
 
-    public String getSelectedQuestion() {
-        return questionsList.getSelectedValue();
+    private void deleteSelectedQuestion() {
+        int selectedIndex = questionsList.getSelectedIndex();
+
+        if (selectedIndex != -1) {
+            int option = JOptionPane.showConfirmDialog(
+                    this,
+                    "Möchten Sie diese Frage wirklich löschen?",
+                    "Löschen bestätigen",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (option == JOptionPane.YES_OPTION) {
+                // Entferne aus den Models
+                questionsModel.remove(selectedIndex);
+                answersModel.remove(selectedIndex);
+
+                // Erstelle neues Fragen-Array ohne die gelöschte Frage
+                Frage[] alleFragen = fragenpool.getFragen();
+                Frage[] neueFragen = new Frage[alleFragen.length - 1];
+
+                int neuIndex = 0;
+                for (int i = 0; i < alleFragen.length; i++) {
+                    if (i != selectedIndex) {
+                        neueFragen[neuIndex++] = alleFragen[i];
+                    }
+                }
+
+                fragenpool.setFragen(neueFragen);
+            }
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Bitte wählen Sie eine Frage zum Löschen aus!",
+                    "Keine Auswahl",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
     }
 
-    public String getSelectedAnswer() {
-        return answersList.getSelectedValue();
-    }
-
-    // Test-Methode
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Fragen/Antworten Manager");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-            ManageQuestionsPanel panel = new ManageQuestionsPanel();
-            frame.add(panel);
-
-            frame.setSize(800, 500);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
+    private void saveFragenpool() {
+        FrageSaveLoad saver = new FrageSaveLoad();
+        try {
+            String cleanFilename = filename.replace(".txt", "");
+            saver.saveFragenpool(fragenpool, statistik, cleanFilename);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Fragenpool erfolgreich gespeichert!",
+                    "Erfolg",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Fehler beim Speichern: " + e.getMessage(),
+                    "Fehler",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
     }
 }
