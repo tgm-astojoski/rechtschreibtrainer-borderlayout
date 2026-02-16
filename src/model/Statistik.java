@@ -1,7 +1,7 @@
 package model;
 
+// --------------------- Statistik ---------------------
 public class Statistik {
-
     private int richtigeFragen;
     private int falscheFragen;
 
@@ -11,8 +11,7 @@ public class Statistik {
     }
 
     public boolean pruefeAntwort(Frage frage, String benutzerAntwort) {
-
-        if (frage.getAnswer().equals(benutzerAntwort)) {
+        if (frage.getAnswer().equalsIgnoreCase(benutzerAntwort)) {
             richtigeFragen++;
             return true;
         } else {
@@ -31,5 +30,13 @@ public class Statistik {
 
     public int getGesamt() {
         return richtigeFragen + falscheFragen;
+    }
+
+    public void setRichtigeFragen(int richtigeFragen) {
+        this.richtigeFragen = richtigeFragen;
+    }
+
+    public void setFalscheFragen(int falscheFragen) {
+        this.falscheFragen = falscheFragen;
     }
 }

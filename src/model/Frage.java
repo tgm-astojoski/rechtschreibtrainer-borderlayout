@@ -5,7 +5,7 @@ public class Frage {
     private String answer;
     private boolean image;
 
-    public Frage(String question, String answer, boolean image) {
+    public Frage(String question, String answer) {
         setQuestion(question);
         setAnswer(answer);
         setImage(image);
