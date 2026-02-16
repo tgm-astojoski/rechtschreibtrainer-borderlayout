@@ -16,7 +16,7 @@ public class Controller {
     private RSTBLFrame view;
 
     public Controller(){
-        this.model = new QuizLogic();
+        //this.model = new QuizLogic();
         this.view = new RSTBLFrame(null, null);
         EventHandler handler = new EventHandler(view);
         view.setActionListener(handler);
