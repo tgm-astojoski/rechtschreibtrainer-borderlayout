@@ -1,9 +1,7 @@
 package controller;
 
-import view.MainPanel;
 import view.RSTBLFrame;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -29,6 +27,7 @@ public class EventHandler implements ActionListener {
                 break;
             case game:
                 System.out.println("Game");
+                view.setGamePanel();
                 break;
             case fragenVerwalten:
                 System.out.println("FragenVerwalten");
@@ -80,7 +79,14 @@ public class EventHandler implements ActionListener {
                 System.out.println("Tipp");
                  break;
             case quizAnswer:
-                System.out.println("Eingegebene Antwort ist " + view.getUserInput());
+                System.out.println("Eingegebene Antwort ist " + view.getUserQuizInput());
+
+            case gameHint:
+                System.out.println("GameHint");
+                break;
+            case gameAnswer:
+                System.out.println("Eingegebene Antwort ist " + view.getUserGameInput());
+                break;
         }
     }
 }
