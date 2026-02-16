@@ -1,5 +1,10 @@
 package model;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 // --------------------- Statistik ---------------------
 public class Statistik {
     private int richtigeFragen;
@@ -17,6 +22,29 @@ public class Statistik {
         } else {
             falscheFragen++;
             return false;
+        }
+    }
+
+    public static void openURI(String uri) {
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI(uri));
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                runtime.exec(new String[]{"xdg-open", uri});
+            } catch (IOException e) {
+                try {
+                    runtime.exec(new String[]{"open", uri});
+                }
+                catch (IOException e1) {
+                    throw new RuntimeException(e1);
+                }
+            }
         }
     }
 
