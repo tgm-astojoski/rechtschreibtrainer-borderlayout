@@ -10,8 +10,10 @@ import java.awt.event.ActionListener;
 
 public class EventHandler implements ActionListener {
     private RSTBLFrame view;
+    private Controller controller;
 
-    public EventHandler(RSTBLFrame view) {
+    public EventHandler(Controller controller, RSTBLFrame view) {
+        this.controller = controller;
         this.view = view;
     }
 
@@ -23,10 +25,18 @@ public class EventHandler implements ActionListener {
                 ac = a;
             }
         }
-        switch (ac) {
+
+        // EINMALIGE Deklaration der Variable selectedPool
+        String selectedPool = null;
+
+
+        switch(ac) {
             case quiz:
-                System.out.println("Quiz");
-                view.setQuizPanel();
+                System.out.println("Quiz gestartet");
+                selectedPool = view.getSelectedFragePool(); // nur Zuweisung, kein "String" davor
+                if(selectedPool != null) {
+                    controller.startQuiz(selectedPool);
+                }
                 break;
             case game:
                 System.out.println("Game");
@@ -72,7 +82,7 @@ public class EventHandler implements ActionListener {
 
             case manageQuestionPoolBtn:
                 System.out.println("Fragepool verwalten");
-                String selectedPool = view.getSelectedFragePool();
+                selectedPool = view.getSelectedFragePool(); // nur Zuweisung, kein "String"
                 if (selectedPool != null && !selectedPool.isEmpty()) {
                     ManageQuestionsPanel panel = new ManageQuestionsPanel(selectedPool);
                     panel.setVisible(true);
@@ -86,9 +96,10 @@ public class EventHandler implements ActionListener {
                 }
                 break;
             case manageQuestionPoolComboBox:
-                String selectedFragePool = view.getSelectedFragePool();
-                System.out.println("ComboBox Fragepool " + selectedFragePool + " ausgewählt");
+                selectedPool = view.getSelectedFragePool(); // nur Zuweisung, kein "String"
+                System.out.println("ComboBox Fragepool " + selectedPool + " ausgewählt");
                 break;
+
 
             case quizHint:
                 System.out.println("Tipp");

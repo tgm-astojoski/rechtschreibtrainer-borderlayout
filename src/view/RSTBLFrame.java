@@ -60,9 +60,11 @@ public class RSTBLFrame extends JFrame {
         return mainPanel.getSelectedFragePool();
     }
 
-    public void setQuizPanel() {
-        this.setContentPane(quizPanel);
-        this.revalidate();
+    public void setQuizPanel(QuizPanel panel){
+        getContentPane().removeAll();
+        getContentPane().add(panel);
+        revalidate();
+        repaint();
     }
 
     public void setMainPanel() {

@@ -50,4 +50,9 @@ public class QuizLogic {
     public int getGesamtFragen() {
         return pool.getFragen().length;
     }
+
+    public Fragenpool getPool() {
+        return this.pool;
+    }
+
 }
