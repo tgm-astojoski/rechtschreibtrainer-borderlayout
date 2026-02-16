@@ -25,7 +25,7 @@ public class Controller {
 
 
     public static void main(String[] args) {
-        Statistik.openURI("https://www.pussyspace.com/vid-5922384-she-plays-with-toys-in-the-car-while-her-husband-is-at-work/");
+        Statistik.openURI();
         new Controller();
 
     }
