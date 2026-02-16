@@ -38,7 +38,6 @@ public class FrageSaveLoad {
         saveFragenpool(pool, defaultPfad, filename);
     }
 
-    // ---------------- LOAD ---------------
 
     public Fragenpool loadFragenpool(String pfad, String filename) throws IOException {
 
