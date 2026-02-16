@@ -9,9 +9,14 @@ public class FrageSaveLoad {
 
     // ---------------- SAVE ----------------
 
-    public void saveFragenpool(Fragenpool pool, String filename) throws IOException {
+    public void saveFragenpool(Fragenpool pool, String pfad, String filename) throws IOException {
 
-        try (PrintWriter outputStream = new PrintWriter(filename + ".txt")) {
+        File file = new File(pfad, filename + ".txt");
+
+        // Ordner erstellen falls er nicht existiert
+        file.getParentFile().mkdirs();
+
+        try (PrintWriter outputStream = new PrintWriter(file)) {
 
             // Titel speichern
             outputStream.println(pool.getTitel());
@@ -28,18 +33,25 @@ public class FrageSaveLoad {
         }
     }
 
-    public void saveFragenpool(Fragenpool pool, String filename, String pfad) throws IOException {
-        saveFragenpool(pool, pfad + File.separator + filename);
+
+    public void saveFragenpool(Fragenpool pool, String filename) throws IOException {
+        saveFragenpool(pool, defaultPfad, filename);
     }
 
     // ---------------- LOAD ---------------
 
-    public Fragenpool loadFragenpool(String filename) throws IOException {
+    public Fragenpool loadFragenpool(String pfad, String filename) throws IOException {
+
+        File file = new File(pfad, filename + ".txt");
+
+        if (!file.exists()) {
+            throw new FileNotFoundException("Datei nicht gefunden: " + file.getAbsolutePath());
+        }
 
         Fragenpool pool = null;
 
         try (Scanner inputStream =
-                     new Scanner(new BufferedReader(new FileReader(filename + ".txt")))) {
+                     new Scanner(new BufferedReader(new FileReader(file)))) {
 
             if (!inputStream.hasNextLine()) {
                 return null;
@@ -76,7 +88,7 @@ public class FrageSaveLoad {
         return pool;
     }
 
-    public Fragenpool loadFragenpool(String filename, String pfad) throws IOException {
-        return loadFragenpool(pfad + File.separator + filename);
+    public Fragenpool loadFragenpool(String filename) throws IOException {
+        return loadFragenpool(defaultPfad, filename);
     }
 }
