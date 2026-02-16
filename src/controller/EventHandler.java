@@ -1,7 +1,10 @@
 package controller;
 
+import view.MainPanel;
+import view.ManageQuestionsPanel;
 import view.RSTBLFrame;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,7 +30,6 @@ public class EventHandler implements ActionListener {
                 break;
             case game:
                 System.out.println("Game");
-                view.setGamePanel();
                 break;
             case fragenVerwalten:
                 System.out.println("FragenVerwalten");
@@ -69,6 +71,18 @@ public class EventHandler implements ActionListener {
 
             case manageQuestionPoolBtn:
                 System.out.println("Fragepool verwalten");
+                String selectedPool = view.getSelectedFragePool();
+                if (selectedPool != null && !selectedPool.isEmpty()) {
+                    ManageQuestionsPanel panel = new ManageQuestionsPanel(selectedPool);
+                    panel.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(
+                            view,
+                            "Bitte wählen Sie erst einen Fragenpool aus!",
+                            "Kein Pool ausgewählt",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                }
                 break;
             case manageQuestionPoolComboBox:
                 String selectedFragePool = view.getSelectedFragePool();
