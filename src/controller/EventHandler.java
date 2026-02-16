@@ -1,49 +1,106 @@
 package controller;
 
+import view.MainPanel;
+import view.ManageQuestionsPanel;
 import view.RSTBLFrame;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EventHandler implements ActionListener {
-
     private RSTBLFrame view;
-    private Controller controller;
 
-    public EventHandler(Controller controller, RSTBLFrame view) {
-        this.controller = controller;
+    public EventHandler(RSTBLFrame view) {
         this.view = view;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        ActionCommands ac = ActionCommands.valueOf(e.getActionCommand());
-
+        ActionCommands ac = null;
+        for (ActionCommands a : ActionCommands.values()) {
+            if(a.name().equals(e.getActionCommand())) {
+                ac = a;
+            }
+        }
         switch (ac) {
-
             case quiz:
-                String selectedPool = view.getSelectedFragePool();
-                controller.ladeQuiz(selectedPool);
+                System.out.println("Quiz");
                 view.setQuizPanel();
                 break;
+            case game:
+                System.out.println("Game");
+                view.setGamePanel();
+                break;
+            case fragenVerwalten:
+                System.out.println("FragenVerwalten");
+                view.mainHideWestPanel();
+                break;
+            case statistic:
+                System.out.println("Statistik");
+                view.mainHideEastPanel();
+                break;
 
-            case quizAnswer:
+            case menuBarSpeichern:
+                System.out.println("Speichern");
+                break;
+            case menuBarLaden:
+                System.out.println("Laden");
+                break;
+            case menuBarEinstellungen:
+                System.out.println("Einstellungen");
+                break;
+            case menuBarMehr:
+                System.out.println("Mehr");
+                break;
+            case menuBarDarkMode:
+                System.out.println("Dark mode");
+                break;
+            case menuBarAnsichtseinstellungen:
+                System.out.println("Ansichtseinstellungen");
+                break;
+            case menuBarGithub:
+                System.out.println("GitHub");
+                break;
+            case menuBarAnleitung:
+                System.out.println("Anleitung");
+                break;
+            case menuBarZurueck:
+                System.out.println("Zurück");
+                view.setMainPanel();
+                break;
 
-                String input = view.getUserQuizInput();
-
-                boolean richtig =
-                        controller.getModel().pruefeAntwort(input);
-
-                if(richtig){
-                    System.out.println("Richtig");
+            case manageQuestionPoolBtn:
+                System.out.println("Fragepool verwalten");
+                String selectedPool = view.getSelectedFragePool();
+                if (selectedPool != null && !selectedPool.isEmpty()) {
+                    ManageQuestionsPanel panel = new ManageQuestionsPanel(selectedPool);
+                    panel.setVisible(true);
                 } else {
-                    System.out.println("Falsch");
+                    JOptionPane.showMessageDialog(
+                            view,
+                            "Bitte wählen Sie erst einen Fragenpool aus!",
+                            "Kein Pool ausgewählt",
+                            JOptionPane.WARNING_MESSAGE
+                    );
                 }
+                break;
+            case manageQuestionPoolComboBox:
+                String selectedFragePool = view.getSelectedFragePool();
+                System.out.println("ComboBox Fragepool " + selectedFragePool + " ausgewählt");
+                break;
 
-                controller.getModel().naechsteFrage();
-                view.naechsteQuizFrage();
+            case quizHint:
+                System.out.println("Tipp");
+                break;
+            case quizAnswer:
+                System.out.println("Eingegebene Antwort ist " + view.getUserQuizInput());
 
+            case gameHint:
+                System.out.println("GameHint");
+                break;
+            case gameAnswer:
+                System.out.println("Eingegebene Antwort ist " + view.getUserGameInput());
                 break;
         }
     }
