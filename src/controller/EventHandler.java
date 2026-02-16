@@ -1,7 +1,5 @@
 package controller;
 
-import view.MainPanel;
-import view.ManageQuestionsPanel;
 import view.RSTBLFrame;
 
 import javax.swing.*;
@@ -9,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class EventHandler implements ActionListener {
+
     private RSTBLFrame view;
     private Controller controller;
 
@@ -19,99 +18,165 @@ public class EventHandler implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ActionCommands ac = null;
-        for (ActionCommands a : ActionCommands.values()) {
-            if(a.name().equals(e.getActionCommand())) {
-                ac = a;
-            }
-        }
 
-        // EINMALIGE Deklaration der Variable selectedPool
-        String selectedPool = null;
+        ActionCommands ac = ActionCommands.valueOf(e.getActionCommand());
 
+        switch (ac) {
 
-        switch(ac) {
             case quiz:
-                System.out.println("Quiz gestartet");
-                selectedPool = view.getSelectedFragePool(); // nur Zuweisung, kein "String" davor
-                if(selectedPool != null) {
-                    controller.startQuiz(selectedPool);
+                String selectedPool = view.getSelectedFragePool();
+                if (selectedPool != null && !selectedPool.isEmpty()) {
+                    controller.ladeQuiz(selectedPool);
+                    view.setQuizPanel();
                 }
                 break;
+
             case game:
-                System.out.println("Game");
-                view.setGamePanel();
-                break;
-            case fragenVerwalten:
-                System.out.println("FragenVerwalten");
-                view.mainHideWestPanel();
-                break;
-            case statistic:
-                System.out.println("Statistik");
-                view.mainHideEastPanel();
+                String selectedGamePool = view.getSelectedFragePool();
+                if (selectedGamePool != null && !selectedGamePool.isEmpty()) {
+                    controller.ladeGame(selectedGamePool, 7); // 7 Versuche
+                    view.setGamePanel();
+                }
                 break;
 
-            case menuBarSpeichern:
-                System.out.println("Speichern");
+            case quizAnswer:
+                String input = view.getUserQuizInput();
+
+                boolean richtig =
+                        controller.getQuizModel().pruefeAntwort(input);
+
+                if (richtig) {
+                    System.out.println("Richtig");
+                } else {
+                    System.out.println("Falsch");
+                }
+
+                controller.getQuizModel().naechsteFrage();
+                view.naechsteQuizFrage();
                 break;
-            case menuBarLaden:
-                System.out.println("Laden");
+
+            case gameAnswer:
+                String buchstabe = view.getUserGameInput();
+
+                if (buchstabe != null && !buchstabe.isEmpty()) {
+                    boolean gefunden = controller.getGameModel().versucheBuchstabe(buchstabe);
+
+                    view.updateGameDisplay(
+                            controller.getGameModel().getBekanntesBuchstaben(),
+                            controller.getGameModel().getVersucheBuchstaben(),
+                            controller.getGameModel().getVersucheUebrig(),
+                            controller.getGameModel().getAktuelleFrage()
+                    );
+
+                    view.clearGameInput();
+
+                    // Prüfe auf Gewinn oder Verlust
+                    if (controller.getGameModel().istGewonnen()) {
+                        view.showGameMessage(
+                                "Glückwunsch! Du hast das Wort erraten: " +
+                                        controller.getGameModel().getAktuelleAntwort(),
+                                "Gewonnen!",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+
+                        if (controller.getGameModel().hatNochFragen()) {
+                            int option = JOptionPane.showConfirmDialog(
+                                    view,
+                                    "Möchtest du die nächste Frage spielen?",
+                                    "Weiter?",
+                                    JOptionPane.YES_NO_OPTION
+                            );
+
+                            if (option == JOptionPane.YES_OPTION) {
+                                controller.getGameModel().naechsteFrage();
+                                view.updateGameDisplay(
+                                        controller.getGameModel().getBekanntesBuchstaben(),
+                                        controller.getGameModel().getVersucheBuchstaben(),
+                                        controller.getGameModel().getVersucheUebrig(),
+                                        controller.getGameModel().getAktuelleFrage()
+                                );
+                            } else {
+                                view.setMainPanel();
+                            }
+                        } else {
+                            view.showGameMessage(
+                                    "Du hast alle Fragen beantwortet!",
+                                    "Spiel beendet",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            view.setMainPanel();
+                        }
+                    } else if (controller.getGameModel().istVerloren()) {
+                        view.showGameMessage(
+                                "Leider verloren! Das Wort war: " +
+                                        controller.getGameModel().getAktuelleAntwort(),
+                                "Verloren!",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+
+                        if (controller.getGameModel().hatNochFragen()) {
+                            int option = JOptionPane.showConfirmDialog(
+                                    view,
+                                    "Möchtest du die nächste Frage spielen?",
+                                    "Weiter?",
+                                    JOptionPane.YES_NO_OPTION
+                            );
+
+                            if (option == JOptionPane.YES_OPTION) {
+                                controller.getGameModel().naechsteFrage();
+                                view.updateGameDisplay(
+                                        controller.getGameModel().getBekanntesBuchstaben(),
+                                        controller.getGameModel().getVersucheBuchstaben(),
+                                        controller.getGameModel().getVersucheUebrig(),
+                                        controller.getGameModel().getAktuelleFrage()
+                                );
+                            } else {
+                                view.setMainPanel();
+                            }
+                        } else {
+                            view.showGameMessage(
+                                    "Spiel beendet!",
+                                    "Ende",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            view.setMainPanel();
+                        }
+                    }
+                }
                 break;
-            case menuBarEinstellungen:
-                System.out.println("Einstellungen");
+
+            case gameHint:
+                String hinweis = controller.getGameModel().getHinweis();
+                view.showGameMessage(hinweis, "Hinweis", JOptionPane.INFORMATION_MESSAGE);
+
+                view.updateGameDisplay(
+                        controller.getGameModel().getBekanntesBuchstaben(),
+                        controller.getGameModel().getVersucheBuchstaben(),
+                        controller.getGameModel().getVersucheUebrig(),
+                        controller.getGameModel().getAktuelleFrage()
+                );
+
+                // Prüfe auf Auto-Gewinn durch Hinweis
+                if (controller.getGameModel().istGewonnen()) {
+                    view.showGameMessage(
+                            "Du hast das Wort erraten: " +
+                                    controller.getGameModel().getAktuelleAntwort(),
+                            "Gewonnen!",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
                 break;
-            case menuBarMehr:
-                System.out.println("Mehr");
-                break;
-            case menuBarDarkMode:
-                System.out.println("Dark mode");
-                break;
-            case menuBarAnsichtseinstellungen:
-                System.out.println("Ansichtseinstellungen");
-                break;
-            case menuBarGithub:
-                System.out.println("GitHub");
-                break;
-            case menuBarAnleitung:
-                System.out.println("Anleitung");
-                break;
+
             case menuBarZurueck:
-                System.out.println("Zurück");
                 view.setMainPanel();
                 break;
 
             case manageQuestionPoolBtn:
-                System.out.println("Fragepool verwalten");
-                selectedPool = view.getSelectedFragePool(); // nur Zuweisung, kein "String"
-                if (selectedPool != null && !selectedPool.isEmpty()) {
-                    ManageQuestionsPanel panel = new ManageQuestionsPanel(selectedPool);
-                    panel.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(
-                            view,
-                            "Bitte wählen Sie erst einen Fragenpool aus!",
-                            "Kein Pool ausgewählt",
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                }
-                break;
-            case manageQuestionPoolComboBox:
-                selectedPool = view.getSelectedFragePool(); // nur Zuweisung, kein "String"
-                System.out.println("ComboBox Fragepool " + selectedPool + " ausgewählt");
+                view.openManageQuestionsPanel();
                 break;
 
-
-            case quizHint:
-                System.out.println("Tipp");
-                break;
-            case quizAnswer:
-                System.out.println("Eingegebene Antwort ist " + view.getUserQuizInput());
-
-            case gameHint:
-                System.out.println("GameHint");
-                break;
-            case gameAnswer:
-                System.out.println("Eingegebene Antwort ist " + view.getUserGameInput());
+            case fragenVerwalten:
+                view.toggleWestPanel();
                 break;
         }
     }

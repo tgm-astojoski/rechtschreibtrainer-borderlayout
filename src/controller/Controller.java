@@ -2,65 +2,86 @@ package controller;
 
 import model.FrageSaveLoad;
 import model.Fragenpool;
+import model.GameLogic;
+import model.QuizLogic;
 import view.RSTBLFrame;
-import view.QuizPanel;
 
 import java.io.IOException;
 
 public class Controller {
+
+    private QuizLogic quizModel;
+    private GameLogic gameModel;
     private RSTBLFrame view;
 
-    // Konstruktor
     public Controller() {
-        // Frame erstellen
-        this.view = new RSTBLFrame(null, null); // QuizLogic kann später hinzugefügt werden
 
-        // EventHandler verbinden
+        this.view = new RSTBLFrame(null, null);
+
         EventHandler handler = new EventHandler(this, view);
         view.setActionListener(handler);
 
-        // Frame sichtbar machen
         view.setVisible(true);
     }
 
-    // Hauptmethode
-    public static void main(String[] args) {
-        new Controller();
-    }
-
-    // Quiz mit ausgewähltem Fragenpool starten
-    public void startQuiz(String selectedPool) {
-        if (selectedPool == null || selectedPool.isEmpty()) {
-            // Warnung, falls kein Pool ausgewählt
-            javax.swing.JOptionPane.showMessageDialog(
-                    view,
-                    "Bitte wähle zuerst einen Fragenpool aus!",
-                    "Kein Pool ausgewählt",
-                    javax.swing.JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
+    public void ladeQuiz(String poolName) {
 
         try {
-            // Fragenpool laden
             FrageSaveLoad loader = new FrageSaveLoad();
-            String cleanFilename = selectedPool.replace(".txt", "");
-            FrageSaveLoad.FragenpoolWithStat result = loader.loadFragenpool("questionPools", cleanFilename);
-            Fragenpool pool = result.getPool();
 
-            // QuizPanel erstellen und anzeigen
-            QuizPanel quizPanel = new QuizPanel(null, pool);
-            view.setQuizPanel(quizPanel);
+            // Entferne .txt Extension falls vorhanden
+            String cleanFilename = poolName.replace(".txt", "");
+
+            FrageSaveLoad.FragenpoolWithStat data =
+                    loader.loadFragenpool("questionPools", cleanFilename);
+
+            Fragenpool pool = data.getPool();
+
+            quizModel = new QuizLogic(pool);
+
+            view.setFragenpool(pool);
 
         } catch (IOException e) {
-            // Fehler anzeigen
             e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(
-                    view,
-                    "Fehler beim Laden des Fragepools: " + e.getMessage(),
-                    "Fehler",
-                    javax.swing.JOptionPane.ERROR_MESSAGE
-            );
         }
+    }
+
+    public void ladeGame(String poolName, int maxVersuche) {
+        try {
+            FrageSaveLoad loader = new FrageSaveLoad();
+
+            // Entferne .txt Extension falls vorhanden
+            String cleanFilename = poolName.replace(".txt", "");
+
+            FrageSaveLoad.FragenpoolWithStat data =
+                    loader.loadFragenpool("questionPools", cleanFilename);
+
+            Fragenpool pool = data.getPool();
+
+            gameModel = new GameLogic(pool, maxVersuche);
+
+            // Initialisiere GamePanel mit der ersten Frage
+            view.initializeGamePanel(
+                    gameModel.getBekanntesBuchstaben(),
+                    gameModel.getVersucheBuchstaben(),
+                    gameModel.getVersucheUebrig(),
+                    gameModel.getAktuelleFrage()
+            );
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public QuizLogic getQuizModel() {
+        return quizModel;
+    }
+
+    public GameLogic getGameModel() {
+        return gameModel;
+    }
+
+    public static void main(String[] args) {
+        new Controller();
     }
 }
