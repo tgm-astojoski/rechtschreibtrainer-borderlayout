@@ -1,6 +1,10 @@
 package controller;
 
 import view.RSTBLFrame;
+import model.QuizLogic;
+import model.Frage;
+import model.Fragenpool;
+import model.Statistik;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -41,19 +45,51 @@ public class EventHandler implements ActionListener {
 
             case quizAnswer:
                 String input = view.getUserQuizInput();
+                QuizLogic quiz = controller.getQuizModel();
+                Frage aktuelleFrage = quiz.getAktuelleFrage();
 
-                boolean richtig =
-                        controller.getQuizModel().pruefeAntwort(input);
+                // Statistik prüft Antwort automatisch
+                boolean richtig = quiz.getPool().getStatistik().pruefeAntwort(aktuelleFrage, input);
 
+                // Popup für richtig/falsch
                 if (richtig) {
-                    System.out.println("Richtig");
+                    JOptionPane.showMessageDialog(
+                            view,
+                            "Richtig!",
+                            "Antwort",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
                 } else {
-                    System.out.println("Falsch");
+                    JOptionPane.showMessageDialog(
+                            view,
+                            "Falsch!",
+                            "Antwort",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
 
-                controller.getQuizModel().naechsteFrage();
+                // Nächste Frage
+                quiz.naechsteFrage();
                 view.naechsteQuizFrage();
+
+                // Prüfen, ob Quiz beendet ist
+                if (quiz.istBeendet()) {
+                    Statistik stat = quiz.getPool().getStatistik();
+                    int richtigCount = stat.getRichtigeFragen();
+                    int gesamt = quiz.getGesamtFragen();
+
+                    JOptionPane.showMessageDialog(
+                            view,
+                            "Quiz beendet! Du hast " + richtigCount + "/" + gesamt + " Fragen richtig beantwortet.",
+                            "Ergebnis",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+
+                    // Zurück zum Hauptmenü
+                    view.setMainPanel();
+                }
                 break;
+
 
             case gameAnswer:
                 String buchstabe = view.getUserGameInput();
