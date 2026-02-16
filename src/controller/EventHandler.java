@@ -30,6 +30,7 @@ public class EventHandler implements ActionListener {
                 break;
             case game:
                 System.out.println("Game");
+                view.setGamePanel();
                 break;
             case fragenVerwalten:
                 System.out.println("FragenVerwalten");
