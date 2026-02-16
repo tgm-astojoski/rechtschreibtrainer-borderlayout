@@ -159,7 +159,7 @@ public class QuizPanel extends JPanel {
         this.quizAnswer.addActionListener(listener);
     }
 
-    public String getUserInput(){
+    public String getUserQuizInput(){
         return answerTextPane.getText();
     }
 }

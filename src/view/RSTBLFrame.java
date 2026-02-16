@@ -12,7 +12,9 @@ import java.io.IOException;
 public class RSTBLFrame extends JFrame {
     MainPanel mainPanel;
     QuizPanel quizPanel;
+    GamePanel gamePanel;
     RSTBLMenu menu;
+    int triesLeft;
 
     public RSTBLFrame(ActionListener actionListener, Fragenpool fragenpool) {
         this.setTitle("Rechtschreibtrainer-Borderlayout");
@@ -28,6 +30,8 @@ public class RSTBLFrame extends JFrame {
 
         mainPanel = new MainPanel(actionListener);
         quizPanel = new QuizPanel(actionListener, fragenpool);
+        this.triesLeft = 5;
+        gamePanel = new GamePanel(actionListener, fragenpool, triesLeft);
         this.setContentPane(mainPanel);
         this.pack();
     }
@@ -47,6 +51,7 @@ public class RSTBLFrame extends JFrame {
     public void setActionListener(ActionListener listener) {
         mainPanel.setActionListener(listener);
         quizPanel.setActionListener(listener);
+        gamePanel.setActionListener(listener);
         menu = new  RSTBLMenu(listener);
         this.setJMenuBar(menu);
     }
@@ -65,7 +70,16 @@ public class RSTBLFrame extends JFrame {
         this.revalidate();
     }
 
-    public String getUserInput(){
-        return quizPanel.getUserInput();
+    public void setGamePanel() {
+        this.setContentPane(gamePanel);
+        this.revalidate();
+    }
+
+    public String getUserQuizInput(){
+        return quizPanel.getUserQuizInput();
+    }
+
+    public String getUserGameInput(){
+        return gamePanel.getUserGameInput();
     }
 }

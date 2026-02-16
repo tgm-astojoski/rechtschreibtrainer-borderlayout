@@ -91,9 +91,16 @@ public class EventHandler implements ActionListener {
 
             case quizHint:
                 System.out.println("Tipp");
-                break;
+                 break;
             case quizAnswer:
-                System.out.println("Eingegebene Antwort ist " + view.getUserInput());
+                System.out.println("Eingegebene Antwort ist " + view.getUserQuizInput());
+
+            case gameHint:
+                System.out.println("GameHint");
+                break;
+            case gameAnswer:
+                System.out.println("Eingegebene Antwort ist " + view.getUserGameInput());
+                break;
         }
     }
 }
