@@ -25,6 +25,7 @@ public class EventHandler implements ActionListener {
         switch (ac) {
             case quiz:
                 System.out.println("Quiz");
+                view.setQuizPanel();
                 break;
             case game:
                 System.out.println("Game");
@@ -64,10 +65,22 @@ public class EventHandler implements ActionListener {
                 break;
             case menuBarZurueck:
                 System.out.println("Zurück");
+                view.setMainPanel();
                 break;
 
             case manageQuestionPoolBtn:
-                System.out.println("Fragepool verwalten verwalten");
+                System.out.println("Fragepool verwalten");
+                break;
+            case manageQuestionPoolComboBox:
+                String selectedFragePool = view.getSelectedFragePool();
+                System.out.println("ComboBox Fragepool " + selectedFragePool + " ausgewählt");
+                break;
+
+            case quizHint:
+                System.out.println("Tipp");
+                 break;
+            case quizAnswer:
+                System.out.println("Eingegebene Antwort ist " + view.getUserInput());
         }
     }
 }

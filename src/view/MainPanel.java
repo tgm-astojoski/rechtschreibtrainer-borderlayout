@@ -13,13 +13,13 @@ public class MainPanel extends JPanel implements ComponentListener {
     private ActionListener actionListener;
 
     private JPanel centerPanel;
-    private JPanel westPanel;
+    private ManageQuestionPoolPanel westPanel;
     private JPanel eastPanel;
 
-    JButton quizBtn;
-    JButton gameBtn;
-    JButton fragenVerwaltenBtn;
-    JButton statisticBtn;
+    private JButton quizBtn;
+    private JButton gameBtn;
+    private JButton fragenVerwaltenBtn;
+    private JButton statisticBtn;
 
     public MainPanel(ActionListener actionListener) {
         this.actionListener = actionListener;
@@ -134,5 +134,11 @@ public class MainPanel extends JPanel implements ComponentListener {
         this.gameBtn.addActionListener(listener);
         this.fragenVerwaltenBtn.addActionListener(listener);
         this.statisticBtn.addActionListener(listener);
+
+        this.westPanel.addActionListener(listener);
+    }
+
+    public String getSelectedFragePool(){
+        return westPanel.getSelectedFragePool();
     }
 }

@@ -9,7 +9,7 @@ public class Controller {
 
     public Controller(){
         this.model = new QuizLogic();
-        this.view = new RSTBLFrame(null);
+        this.view = new RSTBLFrame(null, null);
         EventHandler handler = new EventHandler(view);
         view.setActionListener(handler);
         view.setVisible(true);

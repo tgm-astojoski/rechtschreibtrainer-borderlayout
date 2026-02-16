@@ -41,19 +41,16 @@ public class RSTBLMenu extends JMenuBar {
         ansichtMenu.add(ansichtMenuItem2);
         this.add(ansichtMenu);
 
-        JMenu githubMenu = new JMenu("GitHub");
-        JMenuItem githubMenuItem1 = new JMenuItem("GitHub");
-        githubMenuItem1.setActionCommand(ActionCommands.menuBarGithub.name());
-        githubMenuItem1.addActionListener(actionListener);
-        githubMenu.add(githubMenuItem1);
-        this.add(githubMenu);
-
-        JMenu anleitungMenu = new JMenu("Anleitung");
-        JMenuItem anleitungMenuItem1 = new JMenuItem("Anleitung");
-        anleitungMenuItem1.setActionCommand(ActionCommands.menuBarAnleitung.name());
-        anleitungMenuItem1.addActionListener(actionListener);
-        anleitungMenu.add(anleitungMenuItem1);
-        this.add(anleitungMenu);
+        JMenu hilfeMenu = new JMenu("Hilfe");
+        JMenuItem hilfeMenuItem1 = new JMenuItem("GitHub");
+        JMenuItem hilfeMenuItem2 = new JMenuItem("Anleitung");
+        hilfeMenuItem1.setActionCommand(ActionCommands.menuBarGithub.name());
+        hilfeMenuItem2.setActionCommand(ActionCommands.menuBarAnleitung.name());
+        hilfeMenuItem1.addActionListener(actionListener);
+        hilfeMenuItem2.addActionListener(actionListener);
+        hilfeMenu.add(hilfeMenuItem1);
+        hilfeMenu.add(hilfeMenuItem2);
+        this.add(hilfeMenu);
 
         JMenu zurueckMenu = new JMenu("Zurück");
         JMenuItem zurueckMenuItem1 = new JMenuItem("Zurück");
