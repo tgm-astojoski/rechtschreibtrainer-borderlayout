@@ -1,12 +1,10 @@
 package controller;
+import model.*;
 import view.RSTBLFrame;
 import javax.swing.*;
-import model.QuizLogic;
-import model.Frage;
-import model.Fragenpool;
-import model.Statistik;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class EventHandler implements ActionListener {
 
@@ -26,6 +24,10 @@ public class EventHandler implements ActionListener {
         switch (ac) {
 
             case quiz:
+                System.out.println("Quiz");
+                if(view.getSelectedFragePool() == null) {
+                    JOptionPane.showMessageDialog(null, "Es wurde kein Fragepool gefunden, erstellen sie einen", "Warnung", JOptionPane.ERROR_MESSAGE);
+                }
                 String selectedPool = view.getSelectedFragePool();
                 if (selectedPool != null && !selectedPool.isEmpty()) {
                     controller.ladeQuiz(selectedPool);
@@ -34,11 +36,20 @@ public class EventHandler implements ActionListener {
                 break;
 
             case game:
+                System.out.println("Game");
+                if(view.getSelectedFragePool() == null) {
+                    JOptionPane.showMessageDialog(null, "Es wurde kein Fragepool gefunden, erstellen sie einen", "Warnung", JOptionPane.ERROR_MESSAGE);
+                }
                 String selectedGamePool = view.getSelectedFragePool();
                 if (selectedGamePool != null && !selectedGamePool.isEmpty()) {
                     controller.ladeGame(selectedGamePool, 7); // 7 Versuche
                     view.setGamePanel();
                 }
+                break;
+
+            case statistic:
+                System.out.println("Statistic");
+                view.toggleEastPanel();
                 break;
 
             case quizAnswer:
@@ -87,6 +98,8 @@ public class EventHandler implements ActionListener {
                     view.setMainPanel();
                 }
                 break;
+
+
             case gameAnswer:
                 String buchstabe = view.getUserGameInput();
 
@@ -204,12 +217,32 @@ public class EventHandler implements ActionListener {
                 break;
 
             case manageQuestionPoolBtn:
+                System.out.println("Fragepool verwalten");
+                if(view.getSelectedFragePool() == null) {
+                    JOptionPane.showMessageDialog(null, "Es wurde kein Fragepool gefunden, erstellen sie einen", "Warnung", JOptionPane.ERROR_MESSAGE);
+                }
                 view.openManageQuestionsPanel();
                 break;
 
             case fragenVerwalten:
+                System.out.println("Fragenverwalten");
                 view.toggleWestPanel();
                 break;
+
+            case createQuestionPoolBtn:
+                System.out.println("create Fragepool");
+                createFragePool();
+        }
+    }
+
+    public void createFragePool(){
+
+        String neuerPoolName = JOptionPane.showInputDialog(null, "Geben Sie den Namen des neu zu erstellenden Fragepools an", "Eingabe", JOptionPane.QUESTION_MESSAGE);
+        try{
+            new FrageSaveLoad().saveFragenpool(new Fragenpool(neuerPoolName), new Statistik(), neuerPoolName);
+            view.setQuestionPools(view.getQuestionPools());
+        }catch (IOException ioe){
+            System.out.println("Fehler beim Erstellen vom neuen Fragepool");
         }
     }
 }

@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 // --------------------- FrageSaveLoad ---------------------
 public class FrageSaveLoad {
-    private String defaultPfad = "./";
+    private String defaultPfad = "./questionPools";
 
     // ---------------- SAVE ----------------
     public void saveFragenpool(Fragenpool pool, Statistik statistik, String pfad, String filename) throws IOException {

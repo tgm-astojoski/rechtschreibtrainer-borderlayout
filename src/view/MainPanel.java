@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.File;
+import java.util.Arrays;
 
 public class MainPanel extends JPanel implements ComponentListener {
 
@@ -140,5 +142,13 @@ public class MainPanel extends JPanel implements ComponentListener {
 
     public String getSelectedFragePool(){
         return westPanel.getSelectedFragePool();
+    }
+
+    public String[] getQuestionPools(){
+        return westPanel.getQuestionPools();
+    }
+
+    public void setQuestionPools(String[] questionPools){
+        westPanel.setQuestionPools(questionPools);
     }
 }

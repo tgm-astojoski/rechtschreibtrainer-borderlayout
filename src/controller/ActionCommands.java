@@ -12,6 +12,7 @@ public enum ActionCommands {
 
     manageQuestionPoolBtn,
     manageQuestionPoolComboBox,
+    createQuestionPoolBtn,
     quizHint, quizAnswer,
     gameHint, gameAnswer,
     statisticNext,

@@ -10,7 +10,8 @@ import java.util.Arrays;
 
 public class ManageQuestionPoolPanel extends JPanel {
     private JComboBox questionPoolComboBox;
-    private JButton questionPoolFragenVerwalten;
+    private JButton questionPoolFragenVerwaltenBtn;
+    private JButton createQuestionPoolBtn;
 
     public ManageQuestionPoolPanel(ActionListener actionListener) {
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -33,10 +34,15 @@ public class ManageQuestionPoolPanel extends JPanel {
         questionPoolComboBox.setPreferredSize(new Dimension(this.getWidth(), 25));
         questionPoolComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-        questionPoolFragenVerwalten = new JButton("Fragen verwalten");
-        questionPoolFragenVerwalten.setAlignmentX(Component.LEFT_ALIGNMENT);
-        questionPoolFragenVerwalten.setActionCommand(ActionCommands.manageQuestionPoolBtn.name());
-        questionPoolFragenVerwalten.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        questionPoolFragenVerwaltenBtn = new JButton("Fragen verwalten");
+        questionPoolFragenVerwaltenBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        questionPoolFragenVerwaltenBtn.setActionCommand(ActionCommands.manageQuestionPoolBtn.name());
+        questionPoolFragenVerwaltenBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+
+        createQuestionPoolBtn = new JButton("Fragepool erstellen");
+        createQuestionPoolBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        createQuestionPoolBtn.setActionCommand(ActionCommands.createQuestionPoolBtn.name());
+        createQuestionPoolBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
         this.add(Box.createVerticalStrut(10));
         this.add(questionPoolLabel1);
@@ -45,7 +51,9 @@ public class ManageQuestionPoolPanel extends JPanel {
         this.add(Box.createVerticalStrut(10));
         this.add(questionPoolComboBox);
         this.add(Box.createVerticalStrut(5));
-        this.add(questionPoolFragenVerwalten);
+        this.add(questionPoolFragenVerwaltenBtn);
+        this.add(Box.createVerticalStrut(5));
+        this.add(createQuestionPoolBtn);
     }
 
     public String[] getQuestionPools(){
@@ -65,12 +73,21 @@ public class ManageQuestionPoolPanel extends JPanel {
         return  questionPools;
     }
 
+    public void setQuestionPools(String[] questionPools){
+        this.questionPoolComboBox.setModel(new DefaultComboBoxModel(questionPools));
+    }
+
     public void addActionListener(ActionListener actionListener) {
-        questionPoolFragenVerwalten.addActionListener(actionListener);
+        questionPoolFragenVerwaltenBtn.addActionListener(actionListener);
         questionPoolComboBox.addActionListener(actionListener);
+        createQuestionPoolBtn.addActionListener(actionListener);
     }
 
     public String getSelectedFragePool(){
-        return questionPoolComboBox.getSelectedItem().toString();
+        Object selectedItem = questionPoolComboBox.getSelectedItem();
+        if (selectedItem == null) {
+            return null;
+        }
+        return selectedItem.toString();
     }
 }
