@@ -1,0 +1,16 @@
+Tiere
+++++++++++++++++++++++
+fragenGesamt#0
+fragenRichtig#0
+fragenFalsch#0
+++++++++++++++++++++++
+1#Größtes Landtier der Welt?#Elefant
+2#Schnellstes Landtier?#Gepard
+3#König der Tiere?#Löwe
+4#Tier mit langem Hals?#Giraffe
+5#Schwarz-weiß gestreiftes Tier?#Zebra
+6#Tier das im Beutel trägt?#Känguru
+7#Größtes Meerestier?#Blauwal
+8#Tier mit Rüssel?#Elefant
+9#Tier das Bambus frisst?#Panda
+10#Tier mit Höcker?#Kamel
