@@ -104,4 +104,16 @@ public class RSTBLFrame extends JFrame {
     public void toggleWestPanel() {
         mainPanel.hideWestPanel();
     }
+
+    public void toggleEastPanel() {
+        mainPanel.hideEastPanel();
+    }
+
+    public String[] getQuestionPools(){
+        return mainPanel.getQuestionPools();
+    }
+
+    public void setQuestionPools(String[] questionPools){
+        mainPanel.setQuestionPools(questionPools);
+    }
 }
