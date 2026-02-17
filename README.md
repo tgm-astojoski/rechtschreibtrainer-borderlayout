@@ -34,7 +34,7 @@ Ein Java-Swing-Lernprogramm zum Üben von Rechtschreibung und Vokabular mit Quiz
 │   ├── RSTBLMenu.java
 │   └── StatisticPanel.java
 └── questionPools/
-    └── MeinPool.txt
+    └── pool1.txt
 ```
 
 ## Starten
