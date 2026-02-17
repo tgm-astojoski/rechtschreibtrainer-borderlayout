@@ -1,12 +1,10 @@
 package controller;
-
 import view.RSTBLFrame;
+import javax.swing.*;
 import model.QuizLogic;
 import model.Frage;
 import model.Fragenpool;
 import model.Statistik;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -89,8 +87,6 @@ public class EventHandler implements ActionListener {
                     view.setMainPanel();
                 }
                 break;
-
-
             case gameAnswer:
                 String buchstabe = view.getUserGameInput();
 
